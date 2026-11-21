@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Universal 3D Logo Maker PRO</title>
+
+<style>
+/* ============================================================
+   1. ЖАЛПЫ СТИЛДЕР
+   ============================================================ */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#101116;        /* караңгы фон */
+  color:white;
+  font-family:Arial,sans-serif;
+}
+
+/* Header — башкы меню */
+header{
+  text-align:center;
+  padding:22px;
+  background:#191b23;
+  border-bottom:1px solid #444;
+}
+header h1{color:#dfbd7e;margin:5px;font-size:25px}  /* алтын түс */
+header p{color:#aaa;font-size:12px}
+
+main{max-width:1050px;margin:auto;padding:14px}
+
+/* Ар бир бөлүм карточкасы */
+.panel{
+  background:#1d2029;
+  padding:16px;
+  border-radius:15px;
+  margin-bottom:15px;
+}
+h3{color:#dfbd7e;font-size:15px}
+
+/* Форма элементтери */
+label{display:block;color:#bbb;font-size:12px;margin:13px 0 6px}
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:9px;
+  border:1px solid #484b56;
+  background:#101116;
+  color:white;
+}
+
+/* Баскычтар */
+button{
+  padding:11px;
+  border:1px solid #555;
+  border-radius:9px;
+  background:#30333d;
+  color:white;
+  margin:3px;
+  cursor:pointer;
+}
+button.active{background:#c7a365;color:#15120c}  /* тандалган баскыч */
+
+/* 2 багандуу тор */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+
+/* Логотип көрүнүүчү аймак */
+.preview{
+  background:#27232a;
+  border-radius:12px;
+  min-height:300px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.preview svg{width:100%;height:auto}
+
+/* Баа көрсөтүү */
+.price{font-size:28px;color:#e5c27e;font-weight:bold}
+
+/* Негизги (алтын) баскычтар */
+.primary{
+  background:linear-gradient(135deg,#f1d69a,#ad7d35);
+  color:#17120b;
+  font-weight:bold;
+  border:0;
+  width:100%;
+  padding:15px;
+  margin-top:10px;
+}
+
+.small{font-size:12px;color:#aaa;line-height:1.6}
+.hidden{display:none}   /* жашыруу үчүн */
+
+/* Кичине карточка */
+.card{
+  padding:10px;
+  background:#111319;
+  border:1px solid #454955;
+  border-radius:10px;
+}
+
+/* Эки тарапка бөлүнгөн сап */
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     2. HEADER — STUDIO / ADMIN баскычтары
+     ============================================================ -->
+<header>
+  <h1>✦ UNIVERSAL 3D LOGO MAKER PRO</h1>
+  <p>PROFESSIONAL BRAND DESIGN STUDIO</p>
+  <button onclick="showStudio()">LOGO STUDIO</button>
+  <button onclick="showAdmin()">ADMIN PANEL</button>
+</header>
+
+<!-- ============================================================
+     3. СТУДИЯ — логотип жасоочу негизги бөлүм
+     ============================================================ -->
+<main id="studio">
+
+  <!-- 1. ТЕКСТТЕР -->
+  <div class="panel">
+    <h3>1. ЛОГОТИПТИН АТАЛЫШЫ</h3>
+    <label>Негизги тамгалар</label>
+    <input id="letters" value="TIL" maxlength="4" oninput="render()">
+    <label>Бренддин аталышы</label>
+    <input id="brand" value="TILATA" oninput="render()">
+    <label>Кошумча текст</label>
+    <input id="subtitle" placeholder="PREMIUM BRAND" oninput="render()">
+  </div>
+
+  <!-- 2. ШАБЛОНДОР -->
+  <div class="panel">
+    <h3>2. ДИЗАЙН ШАБЛОНДОРУ</h3>
+    <div class="grid" id="templates">
+      <button class="active" onclick="setTemplate('Luxury',this)">👑 Luxury</button>
+      <button onclick="setTemplate('Premium',this)">💎 Premium</button>
+      <button onclick="setTemplate('Minimal',this)">◈ Minimal</button>
+      <button onclick="setTemplate('Royal',this)">♛ Royal</button>
+      <button onclick="setTemplate('Vintage',this)">Vintage</button>
+      <button onclick="setTemplate('Modern',this)">Modern</button>
+      <button onclick="setTemplate('Leather',this)">Leather 3D</button>
+      <button onclick="setTemplate('Metal',this)">Metal 3D</button>
+    </div>
+  </div>
+
+  <!-- 3. МАТЕРИАЛДАР -->
+  <div class="panel">
+    <h3>3. МАТЕРИАЛДАР</h3>
+    <div class="grid" id="materials">
+      <button class="active" onclick="setMaterial('gold',this)">🥇 Алтын</button>
+      <button onclick="setMaterial('silver',this)">🥈 Күмүш</button>
+      <button onclick="setMaterial('bronze',this)">Коло</button>
+      <button onclick="setMaterial('leather',this)">Булгаары</button>
+      <button onclick="setMaterial('white',this)">Ак</button>
+      <button onclick="setMaterial('black',this)">Кара</button>
+    </div>
+  </div>
+
+  <!-- 4. ФОН -->
+  <div class="panel">
+    <h3>4. ФОН ТҮРЛӨРҮ</h3>
+    <select id="background" onchange="render()">
+      <option value="#17151a">Кара премиум</option>
+      <option value="#806347">Күрөң</option>
+      <option value="#e8ddc9">Беж</option>
+      <option value="#263449">Көк</option>
+      <option value="#343434">Графит</option>
+      <option value="transparent">Тунук фон</option>
+    </select>
+  </div>
+
+  <!-- 5. ФОРМА -->
+  <div class="panel">
+    <h3>5. ЛОГОТИПТИН ФОРМАСЫ</h3>
+    <div class="grid">
+      <button onclick="setShape('oval',this)" class="active">Овал</button>
+      <button onclick="setShape('circle',this)">Тегерек</button>
+      <button onclick="setShape('shield',this)">Герб</button>
+      <button onclick="setShape('none',this)">Алкаксыз</button>
+    </div>
+    <label>Тамгалардын өлчөмү</label>
+    <input id="size" type="range" min="100" max="270" value="200" oninput="render()">
+    <label>Тамгалардын аралыгы</label>
+    <input id="spacing" type="range" min="-15" max="15" value="0" oninput="render()">
+  </div>
+
+  <!-- 6. ПРЕВЬЮ + ЖҮКТӨӨ -->
+  <div class="panel">
+    <h3>6. ДАЯР ЛОГОТИПТИ ТЕКШЕРҮҮ</h3>
+    <div class="preview" id="preview"></div>
+    <div class="row">
+      <span class="small">Алдын ала көрүү</span>
+      <span class="small">LIVE DESIGN</span>
+    </div>
+    <button class="primary" onclick="downloadPNG()">⬇ PNG ЖҮКТӨП АЛУУ</button>
+    <button class="primary" onclick="downloadSVG()">SVG ФАЙЛ САКТОО</button>
+    <button class="primary" onclick="shareLogo()">🔗 ТЕКШЕРҮҮ ШИЛТЕМЕСИ</button>
+  </div>
+
+  <!-- 7. БАА -->
+  <div class="panel">
+    <h3>7. АВТОМАТТЫК БАА</h3>
+    <div class="row">
+      <span>Тандалган дизайн:</span>
+      <b id="designName">Luxury</b>
+    </div>
+    <div class="row">
+      <span>Негизги баа:</span>
+      <b id="basePrice">250 сом</b>
+    </div>
+    <div class="row">
+      <span>Кошумча файлдар:</span>
+      <b id="extraPrice">0 сом</b>
+    </div>
+    <hr>
+    <div class="row">
+      <strong>ЖАЛПЫ БАА:</strong>
+      <div class="price" id="total">250 сом</div>
+    </div>
+    <label>
+      <input type="checkbox" id="both" onchange="calculate()" style="width:auto">
+      PNG + SVG экөө тең (+100 сом)
+    </label>
+    <button class="primary" onclick="createOrder()">ЗАКАЗ БЕРҮҮ</button>
+  </div>
+
+  <!-- 8. ТӨЛӨМ -->
+  <div class="panel">
+    <h3>8. MBANK ТӨЛӨМ</h3>
+    <p>Төлөм номери:</p>
+    <div class="price">0556-652-652</div>
+    <button onclick="copyPhone()">НОМЕРДИ КӨЧҮРҮҮ</button>
+    <p class="small">
+      1. MBank тиркемесин ач.<br>
+      2. Телефон номери боюнча которуу бөлүмүнө кир.<br>
+      3. 0556-652-652 номерине жогорудагы эсептелген сумманы котор.<br>
+      4. Төлөмдүн чегин сактап, администраторго жөнөт.
+    </p>
+  </div>
+</main>
+
+<!-- ============================================================
+     4. АДМИН ПАНЕЛИ
+     ============================================================ -->
+<section id="admin" class="hidden">
+  <main>
+    <div class="panel">
+      <h2>👑 ADMIN DASHBOARD</h2>
+      <p class="small">Администратордун башкаруу панели</p>
+
+      <!-- Кирүү формасы -->
+      <div id="login">
+        <label>Администратор сырсөзү</label>
+        <input id="password" type="password" placeholder="Сырсөз">
+        <button class="primary" onclick="login()">КИРҮҮ</button>
+      </div>
+
+      <!-- Dashboard (киргенден кийин) -->
+      <div id="dashboard" class="hidden">
+        <h3>БАШКАРУУ</h3>
+        <div class="card">
+          <p>Жалпы заказдар: <b id="orderCount">0</b></p>
+          <p>Жалпы заказ суммасы: <b id="orderSum">0 сом</b></p>
+        </div>
+
+        <label>Администратор сырсөзүн өзгөртүү</label>
+        <input id="newPass" type="password" placeholder="Жаңы сырсөз">
+        <button onclick="changePass()">СЫРСӨЗДҮ ӨЗГӨРТҮҮ</button>
+
+        <h3>ЗАКАЗДАР</h3>
+        <div id="orders"></div>
+
+        <h3>БАЗАЛЫК БААНЫ ӨЗГӨРТҮҮ</h3>
+        <label>Luxury баасы</label>
+        <input type="number" id="priceLuxury" value="250">
+        <label>Premium баасы</label>
+        <input type="number" id="pricePremium" value="300">
+        <button onclick="savePrices()">БААЛАРДЫ САКТОО</button>
+        <button onclick="logout()">ЧЫГУУ</button>
+      </div>
+    </div>
+  </main>
+</section>
+
+<script>
+/* ============================================================
+   5. ГЛОБАЛДУУ ӨЗГӨРМӨЛӨР
+   ============================================================ */
+let template = 'Luxury';     // учурдагы шаблон
+let material = 'gold';       // учурдагы материал
+let shape = 'oval';          // учурдагы форма
+let currentPrice = 250;      // учурдагы баа
+
+/* Демейки баалар (админ өзгөртө алат) */
+const defaultPrices = {
+  Luxury: 250, Premium: 300, Minimal: 100, Royal: 350,
+  Vintage: 200, Modern: 180, Leather: 450, Metal: 350
+};
+
+/* Бааларды localStorage'тан окуу */
+function getPrices() {
+  return JSON.parse(localStorage.getItem('logoPrices') || 'null') || defaultPrices;
+}
+
+/* ============================================================
+   6. ТАНДОО ФУНКЦИЯЛАРЫ
+   ============================================================ */
+function setTemplate(v, b) {
+  template = v;
+  document.querySelectorAll('#templates button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  render();
+}
+
+function setMaterial(v, b) {
+  material = v;
+  document.querySelectorAll('#materials button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  render();
+}
+
+function setShape(v, b) {
+  shape = v;
+  b.parentElement.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  render();
+}
+
+/* ============================================================
+   7. XSS КООПСУЗДУК — текстти HTML'ге коопсуз кылып айландыруу
+   ============================================================ */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+/* ============================================================
+   8. RENDER — SVG ЛОГОТИПТИ ТҮЗҮҮ (эң маанилүү функция)
+   ============================================================ */
+function render() {
+  /* 8.1. Маалыматтарды окуу */
+  let letters = esc(document.getElementById('letters').value || 'LOGO');
+  let brand   = esc(document.getElementById('brand').value);
+  let sub     = esc(document.getElementById('subtitle').value);
+  let bg      = document.getElementById('background').value;
+  let size    = +document.getElementById('size').value;
+  let spacing = +document.getElementById('spacing').value;
+
+  /* 8.2. Материалга жараша 3 түс (градиент үчүн) */
+  let colors = {
+    gold:    ['#fff0b5', '#b88b42', '#fff0bd'],
+    silver:  ['#fff',    '#89919c', '#dce1e8'],
+    bronze:  ['#f3c18b', '#87502c', '#e5a66b'],
+    leather: ['#f3d99b', '#79532c', '#d2a35d'],
+    white:   ['#fff',    '#ccc',    '#fff'],
+    black:   ['#777',    '#111',    '#555']
+  }[material];
+
+  /* 8.3. Форма (алкак) тандоо */
+  let border = '';
+  if (shape === 'oval')   border = '<ellipse cx="450" cy="430" rx="330" ry="230"/>';
+  if (shape === 'circle') border = '<circle cx="450" cy="430" r="240"/>';
+  if (shape === 'shield') border = '<path d="M450 160 L740 280 L690 570 Q620 710 450 770 Q280 710 210 570 L160 280 Z"/>';
+
+  /* 8.4. Фон (тунук болсо бош) */
+  let background = bg === 'transparent' ? '' : `<rect width="900" height="900" fill="${bg}"/>`;
+
+  /* 8.5. SVG кодун куруу */
+  let svg = `
+<svg id="logoSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <defs>
+    <!-- Металл градиенти: жарык → караңгы → жарык -->
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="${colors[0]}"/>
+      <stop offset=".5" stop-color="${colors[1]}"/>
+      <stop offset=".75" stop-color="${colors[2]}"/>
+      <stop offset="1" stop-color="${colors[1]}"/>
+    </linearGradient>
+    <!-- 3D көлөкө эффекти -->
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="b"/>
+      <feOffset in="b" dx="6" dy="8" result="s"/>
+      <feMerge>
+        <feMergeNode in="s"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  ${background}
+
+  <!-- Форма -->
+  <g fill="none" stroke="url(#metal)" stroke-width="9" filter="url(#shadow)">
+    ${border}
+  </g>
+
+  <!-- Негизги тамгалар -->
+  <g fill="url(#metal)" stroke="#0005" stroke-width="1.5" filter="url(#shadow)">
+    <text x="450" y="510" text-anchor="middle"
+          font-family="Georgia,serif" font-size="${size}"
+          font-weight="bold" letter-spacing="${spacing}">
+      ${letters}
+    </text>
+  </g>
+
+  <!-- Бренддин аты -->
+  <text x="450" y="735" text-anchor="middle"
+        font-family="Georgia,serif" font-size="48"
+        letter-spacing="5" fill="url(#metal)">${brand}</text>
+
+  <!-- Кошумча текст -->
+  <text x="450" y="790" text-anchor="middle"
+        font-size="20" letter-spacing="5" fill="url(#metal)">${sub}</text>
+</svg>`;
+
+  /* 8.6. Preview'ге жазуу + баа эсептөө */
+  document.getElementById('preview').innerHTML = svg;
+  document.getElementById('designName').textContent = template;
+  calculate();
+}
+
+/* ============================================================
+   9. БАА ЭСЕПТӨӨ
+   ============================================================ */
+function calculate() {
+  let prices = getPrices();
+  let base = prices[template] || 250;
+  let extra = document.getElementById('both').checked ? 100 : 0;
+  let materialExtra = { gold: 0, silver: 0, bronze: 50, leather: 100, white: 0, black: 0 }[material];
+  let shapeExtra    = { oval: 0, circle: 0, shield: 50, none: 0 }[shape];
+
+  currentPrice = base + extra + materialExtra + shapeExtra;
+
+  document.getElementById('basePrice').textContent  = base + ' сом';
+  document.getElementById('extraPrice').textContent = (extra + materialExtra + shapeExtra) + ' сом';
+  document.getElementById('total').textContent      = currentPrice + ' сом';
+}
+
+/* ============================================================
+   10. ФАЙЛ ЖҮКТӨӨ
+   ============================================================ */
+
+/* PNG — SVG'ни canvas аркылуу растрга айландырат */
+function downloadPNG() {
+  let svg = document.getElementById('logoSVG');
+  let blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml' });
+  let url = URL.createObjectURL(blob), img = new Image();
+
+  img.onload = () => {
+    let c = document.createElement('canvas');
+    c.width = 1800; c.height = 1800;
+    c.getContext('2d').drawImage(img, 0, 0, 1800, 1800);
+    c.toBlob(p => {
+      let a = document.createElement('a'), u = URL.createObjectURL(p);
+      a.href = u;
+      a.download = 'My_Logo.png';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(u), 1000);
+      URL.revokeObjectURL(url);
+    });
+  };
+  img.src = url;
+}
+
+/* SVG — түз текст катары жүктөйт */
+function downloadSVG() {
+  let data = new XMLSerializer().serializeToString(document.getElementById('logoSVG'));
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml' }));
+  a.download = 'My_Logo.svg';
+  a.click();
+}
+
+/* ============================================================
+   11. БӨЛҮШҮҮ ШИЛТЕМЕСИ (URL аркылуу)
+   ============================================================ */
+function shareLogo() {
+  let data = {
+    letters: letters.value, brand: brand.value, subtitle: subtitle.value,
+    template, material, shape, bg: background.value,
+    size: size.value, spacing: spacing.value
+  };
+  let url = location.href.split('#')[0] + '#logo=' + encodeURIComponent(JSON.stringify(data));
+  if (url.length > 6000) { alert('Шилтеме өтө узун болуп калды.'); return; }
+
+  if (navigator.clipboard)
+    navigator.clipboard.writeText(url).then(() => alert('Текшерүү шилтемеси көчүрүлдү!'));
+  else
+    prompt('Шилтемени көчүр:', url);
+}
+
+/* URL'ден маалыматты кайтаруу */
+function restoreShare() {
+  try {
+    let raw = location.hash.match(/logo=(.*)/);
+    if (!raw) return;
+    let d = JSON.parse(decodeURIComponent(raw[1]));
+    letters.value   = d.letters;
+    brand.value     = d.brand;
+    subtitle.value  = d.subtitle;
+    template        = d.template;
+    material        = d.material;
+    shape           = d.shape;
+    background.value = d.bg;
+    size.value      = d.size;
+    spacing.value   = d.spacing;
+  } catch (e) {}
+}
+
+/* ============================================================
+   12. ТЕЛЕФОН НОМЕРИН КӨЧҮРҮҮ
+   ============================================================ */
+function copyPhone() {
+  if (navigator.clipboard)
+    navigator.clipboard.writeText('0556-652-652').then(() => alert('Номер көчүрүлдү'));
+  else
+    alert('Төлөм номери: 0556-652-652');
+}
+
+/* ============================================================
+   13. ЗАКАЗ БЕРҮҮ
+   ============================================================ */
+function createOrder() {
+  let orders = JSON.parse(localStorage.getItem('logoOrders') || '[]');
+  let order = {
+    id: Date.now(),
+    name: brand.value,
+    design: template,
+    price: currentPrice,
+    status: 'Төлөм күтүлүүдө',
+    phone: '0556-652-652',
+    date: new Date().toLocaleString()
+  };
+  orders.push(order);
+  localStorage.setItem('logoOrders', JSON.stringify(orders));
+  alert('Заказ сакталды! Төлөмдү 0556-652-652 номерине которуп, чекти администраторго жөнөт.');
+}
+
+/* ============================================================
+   14. СТУДИЯ / АДМИН ПАНЕЛИН АЛМАШТЫРУУ
+   ============================================================ */
+function showStudio() {
+  studio.classList.remove('hidden');
+  admin.classList.add('hidden');
+}
+function showAdmin() {
+  studio.classList.add('hidden');
+  admin.classList.remove('hidden');
+}
+
+/* ============================================================
+   15. АДМИН — КИРҮҮ / ЧЫГУУ / СЫРСӨЗ
+   ============================================================ */
+function login() {
+  let saved = localStorage.getItem('logoAdminPass') || 'TILATA2026';
+  if (password.value === saved) loginPanel();
+  else alert('Сырсөз туура эмес!');
+}
+
+function loginPanel() {
+  document.getElementById('login').classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  loadOrders();
+}
+
+function logout() {
+  dashboard.classList.add('hidden');
+  login.classList.remove('hidden');
+}
+
+function changePass() {
+  if (newPass.value.length < 6) return alert('Сырсөз кеминде 6 белгиден турсун');
+  localStorage.setItem('logoAdminPass', newPass.value);
+  newPass.value = '';
+  alert('Сырсөз өзгөртүлдү');
+}
+
+/* ============================================================
+   16. ЗАКАЗДАРДЫ ЖҮКТӨӨ / СТАТУСУН ӨЗГӨРТҮҮ
+   ============================================================ */
+function loadOrders() {
+  let orders = JSON.parse(localStorage.getItem('logoOrders') || '[]');
+  orderCount.textContent = orders.length;
+  orderSum.textContent = orders.reduce((s, o) => s + o.price, 0) + ' сом';
+
+  let ordersDiv = document.getElementById('orders');
+  ordersDiv.innerHTML = orders.map(o => `
+    <div class="card">
+      <b>Заказ #${o.id}</b>
+      <p>${esc(o.name)} · ${esc(o.design)}</p>
+      <p>${o.price} сом · ${esc(o.date)}</p>
+      <p>Статус: ${esc(o.status)}</p>
+      <button onclick="statusOrder(${o.id},'Төлөм кабыл алынды')">ТӨЛӨМ ТЕКШЕРИЛДИ</button>
+      <button onclick="statusOrder(${o.id},'Аткарылды')">АТКАРЫЛДЫ</button>
+    </div>`).join('') || 'Азырынча заказ жок';
+}
+
+function statusOrder(id, status) {
+  let orders = JSON.parse(localStorage.getItem('logoOrders') || '[]');
+  orders = orders.map(o => o.id === id ? { ...o, status } : o);
+  localStorage.setItem('logoOrders', JSON.stringify(orders));
+  loadOrders();
+}
+
+/* ============================================================
+   17. БААЛАРДЫ САКТОО
+   ============================================================ */
+function savePrices() {
+  let p = getPrices();
+  p.Luxury  = +priceLuxury.value;
+  p.Premium = +pricePremium.value;
+  localStorage.setItem('logoPrices', JSON.stringify(p));
+  calculate();
+  alert('Баалар сакталды');
+}
+
+/* ============================================================
+   18. ИШТЕТҮҮ (барак ачылганда)
+   ============================================================ */
+restoreShare();   // URL'де маалымат болсо кайтаруу
+render();          // логотипти тартуу
+</script>
+</body>
+</html>
