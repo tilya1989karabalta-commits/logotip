@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Logo Studio</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#101116;
+ color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ text-align:center;
+ padding:22px;
+ background:#191b23;
+ border-bottom:1px solid #444;
+}
+header h1{color:#d9b875;font-size:25px}
+header p{color:#aaa;font-size:13px}
+.container{max-width:900px;margin:auto;padding:15px}
+.panel{
+ background:#1d2029;
+ padding:17px;
+ border-radius:16px;
+ margin-bottom:15px;
+}
+.preview{
+ min-height:350px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#27232a;
+ border-radius:12px;
+ overflow:hidden;
+}
+.preview svg{width:100%;height:auto}
+label{
+ display:block;
+ margin:14px 0 7px;
+ color:#d9b875;
+ font-size:13px;
+}
+input,select{
+ width:100%;
+ padding:13px;
+ border-radius:9px;
+ background:#101116;
+ border:1px solid #555;
+ color:white;
+ font-size:15px;
+}
+button{
+ padding:11px 14px;
+ border:1px solid #555;
+ border-radius:9px;
+ background:#30333d;
+ color:white;
+ margin:4px;
+ cursor:pointer;
+}
+button.active{
+ background:#bd9856;
+ color:black;
+}
+.download{
+ width:100%;
+ background:linear-gradient(135deg,#e4c98e,#a87a36);
+ color:black;
+ font-weight:bold;
+ border:0;
+ padding:15px;
+ margin-top:12px;
+}
+.colors{display:flex;gap:10px;flex-wrap:wrap}
+.color{
+ width:32px;height:32px;
+ border-radius:50%;
+ border:2px solid white;
+ padding:0;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <h1>3D LOGO STUDIO</h1>
+ <p>Professional Logo Maker</p>
+</header>
+
+<div class="container">
+
+<div class="panel">
+ <div class="preview" id="preview"></div>
+ <button class="download" onclick="downloadPNG()">
+ ⬇ PNG ЖҮКТӨП АЛУУ
+ </button>
+</div>
+
+<div class="panel">
+
+<h3>ЛОГОТИП ЖАСОО</h3>
+
+<label>Негизги тамгалар</label>
+<input id="letters" value="ANNA" maxlength="4" oninput="update()">
+
+<label>Астындагы аталыш</label>
+<input id="name" value="ANNA" oninput="update()">
+
+<label>Кошумча текст</label>
+<input id="sub" placeholder="PREMIUM BRAND" oninput="update()">
+
+<label>Логотип формасы</label>
+<div>
+<button class="active" onclick="shape='oval';selectBtn(this);update()">Овал</button>
+<button onclick="shape='circle';selectBtn(this);update()">Тегерек</button>
+<button onclick="shape='none';selectBtn(this);update()">Алкаксыз</button>
+</div>
+
+<label>3D эффект</label>
+<div>
+<button class="active" onclick="effect='gold';selectBtn(this);update()">Алтын</button>
+<button onclick="effect='silver';selectBtn(this);update()">Күмүш</button>
+<button onclick="effect='leather';selectBtn(this);update()">Булгаары</button>
+<button onclick="effect='flat';selectBtn(this);update()">Жөнөкөй</button>
+</div>
+
+<label>Түстөр</label>
+<div class="colors">
+<button class="color" style="background:#d4af37" onclick="color='#d4af37';update()"></button>
+<button class="color" style="background:#eeeeee" onclick="color='#eeeeee';update()"></button>
+<button class="color" style="background:#bd7950" onclick="color='#bd7950';update()"></button>
+<button class="color" style="background:#b9a0d9" onclick="color='#b9a0d9';update()"></button>
+<button class="color" style="background:#91b7a4" onclick="color='#91b7a4';update()"></button>
+</div>
+
+<label>Фон</label>
+<select id="bg" onchange="update()">
+<option value="#17151a">Кара</option>
+<option value="#806347">Күрөң</option>
+<option value="#e8ddc9">Беж</option>
+<option value="#263449">Көк</option>
+</select>
+
+</div>
+</div>
+
+<script>
+let shape='oval';
+let effect='gold';
+let color='#d4af37';
+
+function selectBtn(btn){
+ btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+}
+
+function update(){
+
+let letters=document.getElementById('letters').value || 'LOGO';
+let name=document.getElementById('name').value;
+let sub=document.getElementById('sub').value;
+let bg=document.getElementById('bg').value;
+
+let border='';
+
+if(shape==='oval'){
+ border='<ellipse cx="450" cy="430" rx="330" ry="230"/>';
+}
+if(shape==='circle'){
+ border='<circle cx="450" cy="430" r="240"/>';
+}
+
+let fill=color;
+let gradient='';
+
+if(effect==='gold'){
+ gradient='<linearGradient id="metal"><stop stop-color="#fff0b5"/><stop offset=".3" stop-color="#b88b42"/><stop offset=".6" stop-color="#fff0bd"/><stop offset="1" stop-color="#9b692d"/></linearGradient>';
+ fill='url(#metal)';
+}
+if(effect==='silver'){
+ gradient='<linearGradient id="metal"><stop stop-color="white"/><stop offset=".5" stop-color="#89919c"/><stop offset="1" stop-color="white"/></linearGradient>';
+ fill='url(#metal)';
+}
+if(effect==='leather'){
+ gradient='<linearGradient id="metal"><stop stop-color="#f3d99b"/><stop offset=".5" stop-color="#9d7a43"/><stop offset="1" stop-color="#e4c17b"/></linearGradient>';
+ fill='url(#metal)';
+}
+
+let font=effect==='leather'?'Georgia,serif':'Arial,sans-serif';
+
+let svg=`
+<svg id="logoSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+
+<defs>
+${gradient}
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+<feOffset in="blur" dx="5" dy="7" result="dark"/>
+<feMerge>
+<feMergeNode in="dark"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+</defs>
+
+<rect width="900" height="900" fill="${bg}"/>
+
+<g fill="none" stroke="${fill}" stroke-width="9"
+filter="url(#shadow)">
+${border}
+</g>
+
+<text x="450" y="500"
+text-anchor="middle"
+font-family="${font}"
+font-size="205"
+font-weight="bold"
+letter-spacing="-10"
+fill="${fill}"
+stroke="#00000055"
+stroke-width="2"
+filter="url(#shadow)">
+${escapeHTML(letters)}
+</text>
+
+<text x="450" y="735"
+text-anchor="middle"
+font-size="48"
+letter-spacing="5"
+font-family="Arial"
+fill="${color}">
+${escapeHTML(name)}
+</text>
+
+<text x="450" y="790"
+text-anchor="middle"
+font-size="22"
+letter-spacing="4"
+fill="${color}">
+${escapeHTML(sub)}
+</text>
+
+</svg>`;
+
+document.getElementById('preview').innerHTML=svg;
+}
+
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;',
+ '"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+function downloadPNG(){
+
+let svg=document.getElementById('logoSVG');
+let data=new XMLSerializer().serializeToString(svg);
+let blob=new Blob([data],{type:'image/svg+xml'});
+let url=URL.createObjectURL(blob);
+
+let img=new Image();
+
+img.onload=function(){
+ let canvas=document.createElement('canvas');
+ canvas.width=1800;
+ canvas.height=1800;
+
+ let ctx=canvas.getContext('2d');
+ ctx.drawImage(img,0,0,1800,1800);
+
+ canvas.toBlob(function(png){
+ let a=document.createElement('a');
+ let pngURL=URL.createObjectURL(png);
+ a.href=pngURL;
+ a.download='My_3D_Logo.png';
+ a.click();
+ URL.revokeObjectURL(pngURL);
+ URL.revokeObjectURL(url);
+ });
+};
+
+img.src=url;
+}
+
+update();
+</script>
+
+</body>
+</html>
